@@ -1,0 +1,3 @@
+== About ==
+
+Chain is an implementation of the classic Lisp-style Cons list data structure, a chain of value-link pairs.
