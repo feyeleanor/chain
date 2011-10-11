@@ -1,6 +1,9 @@
 package chain
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/feyeleanor/raw"
+)
 
 type Cell struct {
 	Head		interface{}
@@ -106,7 +109,7 @@ func (c *Cell) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
 	case *Cell:			r = o != nil && c.equal(*o)
 	case Cell:			r = c.equal(o)
-	default:				r = c.equal(Cell{ Head: o })
+	default:			r = c.equal(Cell{ Head: o })
 	}
 	return
 }
@@ -142,5 +145,25 @@ func (c *Cell) Rplacd(next *Cell) {
 		c.Tail = next
 	} else {
 		*c = *next
+	}
+}
+
+func (c *Cell) Each(f interface{}) {
+	switch f := f.(type) {
+	case func(interface{}) interface{}:		raw.Catch(func() {
+												for k := c; k != nil; k = k.Tail {
+													k.Head = f(k.Head)
+												}
+											})
+
+	case func(interface{}):					raw.Catch(func() {
+												for k := c; k != nil; k = k.Tail {
+													f(k.Head)
+												}
+											})
+
+	case interface{}:						for k := c; k != nil; k = k.Tail {
+												k.Head = f
+											}
 	}
 }

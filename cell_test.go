@@ -47,10 +47,30 @@ func TestCellSet(t *testing.T) {
 	ConfirmSet := func(c *Cell, i int, v interface{}, r interface{}) {
 		switch {
 		case !c.Set(i, v):		t.Fatalf("Set(%v, %v) failed", i, v)
-		case !c.Equal(r):			t.Fatalf("Set(%v, %v) should be %v but is %v", i, v, r, c)
+		case !c.Equal(r):		t.Fatalf("Set(%v, %v) should be %v but is %v", i, v, r, c)
 		}
 	}
 	ConfirmSet(Cons(0), CURRENT_NODE, 1, Cons(1))
 	ConfirmSet(Cons(0, 1), NEXT_NODE, 2, Cons(0, 2))
 	ConfirmSet(Cons(0, 1, 2), NEXT_NODE + 1, 3, Cons(0, 1, 2, 3))
+}
+
+func TestEach(t *testing.T) {
+	ConfirmEach := func(c *Cell, f interface{}, r *Cell) {
+		cstring := c.String()
+		if c.Each(f); !c.Equal(r) {
+			t.Fatalf("%v.Each(%v) should be %v but is %v", cstring, f, r, c)
+		}
+	}
+	ConfirmEach(Cons(0), 13, Cons(13))
+	ConfirmEach(Cons(0, 1), 13, Cons(13, 13))
+
+	f := func(i interface{}) interface{} {
+		switch i := i.(type) {
+		case int:			return i * 3
+		}
+		return 0
+	}
+	ConfirmEach(Cons(0), f, Cons(0))
+	ConfirmEach(Cons(0, 1), f, Cons(0, 3))
 }
