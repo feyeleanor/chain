@@ -125,9 +125,49 @@ func (c *Cell) Car() (v interface{}) {
 	return
 }
 
+func (c *Cell) Caar() (v interface{}) {
+	if c != nil && c.Tail != nil {
+		v = c.Tail.Head
+	}
+	return
+}
+
+func (c *Cell) Car2() (x, y interface{}) {
+	switch {
+	case c == nil:			return nil, nil
+	case c.Tail == nil:		return c.Head, nil
+	}
+	return c.Head, c.Tail.Head
+}
+
+func (c *Cell) Car3() (x, y, z interface{}) {
+	switch {
+	case c == nil:					return nil, nil, nil
+	case c.Tail == nil:				return c.Head, nil, nil
+	case c.Tail.Tail == nil:		return c.Head, c.Tail.Head, nil
+	}
+	return c.Head, c.Tail.Head, c.Tail.Tail.Head
+}
+
 func (c *Cell) Cdr() (v *Cell) {
 	if c != nil {
 		v = c.Tail
+	}
+	return
+}
+
+func (c *Cell) Cddr() (v *Cell) {
+	if c != nil && c.Tail != nil {
+		v = c.Tail.Tail
+	}
+	return
+}
+
+func (c *Cell) Cadr() (v *Cell) {
+	if c != nil {
+		if h, ok := c.Head.(*Cell); ok {
+			v = h.Tail
+		}
 	}
 	return
 }
@@ -150,20 +190,78 @@ func (c *Cell) Rplacd(next *Cell) {
 
 func (c *Cell) Each(f interface{}) {
 	switch f := f.(type) {
-	case func(interface{}) interface{}:		raw.Catch(func() {
-												for k := c; k != nil; k = k.Tail {
-													k.Head = f(k.Head)
+	case func(interface{}):						for k := c; k != nil; k = k.Tail { f(k.Head) }
+	case func(int, interface{}):				for i, k := 0, c; k != nil; k = k.Tail {
+													f(i, k.Head)
+													i++
 												}
-											})
-
-	case func(interface{}):					raw.Catch(func() {
-												for k := c; k != nil; k = k.Tail {
-													f(k.Head)
+	case func(interface{}, interface{}):		for i, k := 0, c; k != nil; k = k.Tail {
+													f(i, k.Head)
+													i++
 												}
-											})
-
-	case interface{}:						for k := c; k != nil; k = k.Tail {
-												k.Head = f
-											}
 	}
+}
+
+func (c *Cell) While(f interface{}) (i int, k *Cell) {
+	switch f := f.(type) {
+	case func(interface{}) bool:				for k = c; k != nil; k = k.Tail {
+													if !f(k.Head) {
+														break
+													}
+													i++
+												}
+	case func(int, interface{}) bool:			for k = c; k != nil; k = k.Tail {
+													if !f(i, k.Head) {
+														break
+													}
+													i++
+												}
+	case func(interface{}, interface{}) bool:	for k = c; k != nil; k = k.Tail {
+													if !f(i, k.Head) {
+														break
+													}
+													i++
+												}
+	}
+	return
+}
+
+func (c *Cell) Until(f interface{}) (i int, k *Cell) {
+	switch f := f.(type) {
+	case func(interface{}) bool:				for k = c; k != nil; k = k.Tail {
+													if f(k.Head) {
+														break
+													}
+													i++
+												}
+	case func(int, interface{}) bool:			for k = c; k != nil; k = k.Tail {
+													if f(i, k.Head) {
+														break
+													}
+													i++
+												}
+	case func(interface{}, interface{}) bool:	for k = c; k != nil; k = k.Tail {
+													if f(i, k.Head) {
+														break
+													}
+													i++
+												}
+	}
+	return
+}
+
+func (c *Cell) Len() (l int) {
+	c.Each(func(i interface{}) {
+		l++
+	})
+	return
+}
+
+func (c *Cell) EnsureLen(l int) bool {
+	c.Each(func(i interface{}) {
+		if l--; l == 0 {
+			raw.Throw()
+		}
+	})
+	return l == 0
 }

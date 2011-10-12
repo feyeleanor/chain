@@ -56,21 +56,78 @@ func TestCellSet(t *testing.T) {
 }
 
 func TestEach(t *testing.T) {
-	ConfirmEach := func(c *Cell, f interface{}, r *Cell) {
-		cstring := c.String()
-		if c.Each(f); !c.Equal(r) {
-			t.Fatalf("%v.Each(%v) should be %v but is %v", cstring, f, r, c)
+	list := Cons(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+	count := 0
+	list.Each(func(i interface{}) {
+		if i != count {
+			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
-	}
-	ConfirmEach(Cons(0), 13, Cons(13))
-	ConfirmEach(Cons(0, 1), 13, Cons(13, 13))
+		count++
+	})
 
-	f := func(i interface{}) interface{} {
-		switch i := i.(type) {
-		case int:			return i * 3
+	list.Each(func(index int, i interface{}) {
+		if i != index {
+			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
-		return 0
+	})
+
+	list.Each(func(key, i interface{}) {
+		if i != key {
+			t.Fatalf("element %v erroneously reported as %v", key, i)
+		}
+	})
+}
+
+func TestWhile(t *testing.T) {
+	list := Cons(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+	ConfirmLimit := func(c *Cell, l int, f interface{}) {
+		if count, _ := c.While(f); count != l {
+			t.Fatalf("%v.While() should have iterated %v times not %v times", c, l, count)
+		}
 	}
-	ConfirmEach(Cons(0), f, Cons(0))
-	ConfirmEach(Cons(0, 1), f, Cons(0, 3))
+
+	count := 0
+	limit := 5
+	ConfirmLimit(list, limit, func(i interface{}) bool {
+		if count == limit {
+			return false
+		}
+		count++
+		return true
+	})
+
+	ConfirmLimit(list, limit, func(index int, i interface{}) bool {
+		return index != limit
+	})
+
+	ConfirmLimit(list, limit, func(key, i interface{}) bool {
+		return key.(int) != limit
+	})
+}
+
+func TestUntil(t *testing.T) {
+	list := Cons(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+	ConfirmLimit := func(c *Cell, l int, f interface{}) {
+		if count, _ := c.Until(f); count != l {
+			t.Fatalf("%v.Until() should have iterated %v times not %v times", c, l, count)
+		}
+	}
+
+	count := 0
+	limit := 5
+	ConfirmLimit(list, limit, func(i interface{}) bool {
+		if count == limit {
+			return true
+		}
+		count++
+		return false
+	})
+
+	ConfirmLimit(list, limit, func(index int, i interface{}) bool {
+		return index == limit
+	})
+
+	ConfirmLimit(list, limit, func(key, i interface{}) bool {
+		return key.(int) == limit
+	})
 }
