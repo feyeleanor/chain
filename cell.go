@@ -221,6 +221,18 @@ func (c *Cell) While(f interface{}) (i int, k *Cell) {
 													}
 													i++
 												}
+	case Equatable:								for k = c; k != nil; k = k.Tail {
+													if !f.Equal(k.Head) {
+														break
+													}
+													i++
+												}
+	case interface{}:							for k = c; k != nil; k = k.Tail {
+													if f != k.Head {
+														break
+													}
+													i++
+												}
 	}
 	return
 }
@@ -245,14 +257,27 @@ func (c *Cell) Until(f interface{}) (i int, k *Cell) {
 													}
 													i++
 												}
+	case Equatable:								for k = c; k != nil; k = k.Tail {
+													if f.Equal(k.Head) {
+														break
+													}
+													i++
+												}
+	case interface{}:							for k = c; k != nil; k = k.Tail {
+													if f == k.Head {
+														break
+													}
+													i++
+												}
+	
 	}
 	return
 }
 
 func (c *Cell) Len() (l int) {
-	c.Each(func(i interface{}) {
+	for n := c; n != nil; n = n.Tail {
 		l++
-	})
+	}
 	return
 }
 

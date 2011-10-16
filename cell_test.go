@@ -132,6 +132,18 @@ func TestUntil(t *testing.T) {
 	})
 }
 
+func TestLen(t *testing.T) {
+	ConfirmLen := func(c *Cell, l int) {
+		if r := c.Len(); r != l {
+			t.Fatalf("%v.Len() should be %v but is %v", c, l, r)
+		}
+	}
+	ConfirmLen(Cons(), 0)
+	ConfirmLen(Cons(0), 1)
+	ConfirmLen(Cons(0, 1), 2)
+	ConfirmLen(Cons(Cons(0, 1), 1), 2)
+}
+
 func TestMinimumLength(t *testing.T) {
 	ConfirmMinimumLength := func(c *Cell, l int) {
 		if !c.MinimumLength(l) {
