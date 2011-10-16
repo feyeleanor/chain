@@ -1,7 +1,9 @@
 package chain
 
-import "testing"
-import "reflect"
+import (
+	"testing"
+	"reflect"
+)
 
 func TestCellEnd(t *testing.T) {
 	ConfirmEnd := func(c *Cell, r interface{}) {
@@ -20,6 +22,27 @@ func TestCellEnd(t *testing.T) {
 	ConfirmEnd(Cons(0), 0)
 	ConfirmEnd(Cons(0, 1), 1)
 	ConfirmEnd(Cons(0, 1, 2), 2)
+}
+
+func TestCellEqual(t *testing.T) {
+	ConfirmEqual := func(c, o *Cell) {
+		if !c.Equal(o) {
+			t.Fatalf("%v.Equal(%v) should be true", c, o)
+		}
+	}
+	RefuteEqual := func(c, o *Cell) {
+		if c.Equal(o) {
+			t.Fatalf("%v.Equal(%v) should be false", c, o)
+		}
+	}
+
+	ConfirmEqual(Cons(), Cons())
+	ConfirmEqual(Cons(1), Cons(1))
+	ConfirmEqual(Cons(Cons(2, 3), 1), Cons(Cons(2, 3), 1))
+
+	RefuteEqual(Cons(), Cons(1))
+	RefuteEqual(Cons(), Cons(Cons(1)))
+	RefuteEqual(Cons(1), Cons(2))
 }
 
 func TestCellMoveTo(t *testing.T) {

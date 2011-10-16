@@ -105,10 +105,16 @@ func (c Cell) equal(o Cell) (r bool) {
 }
 
 func (c *Cell) Equal(o interface{}) (r bool) {
-	switch o := o.(type) {
-	case *Cell:			r = o != nil && c.equal(*o)
-	case Cell:			r = c.equal(o)
-	default:			r = c.equal(Cell{ Head: o })
+	if c != nil {
+		switch o := o.(type) {
+		case *Cell:			r = o != nil && c.equal(*o)
+		case Cell:			r = c.equal(o)
+		default:			r = c.equal(Cell{ Head: o })
+		}
+	} else {
+		if o, ok := o.(*Cell); ok {
+			r = o == nil
+		}
 	}
 	return
 }
@@ -227,6 +233,7 @@ func (c *Cell) While(f interface{}) (i int, k *Cell) {
 													}
 													i++
 												}
+	case fmt.Stringer:							i, k = c.While(f.String())
 	case interface{}:							for k = c; k != nil; k = k.Tail {
 													if f != k.Head {
 														break
@@ -263,6 +270,7 @@ func (c *Cell) Until(f interface{}) (i int, k *Cell) {
 													}
 													i++
 												}
+	case fmt.Stringer:							i, k = c.Until(f.String())
 	case interface{}:							for k = c; k != nil; k = k.Tail {
 													if f == k.Head {
 														break

@@ -1,6 +1,8 @@
 package chain
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestLastElement(t *testing.T) {
 	ConfirmLastElement := func(n Node, r interface{}) {
