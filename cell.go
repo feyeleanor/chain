@@ -2,7 +2,6 @@ package chain
 
 import (
 	"fmt"
-	"github.com/feyeleanor/raw"
 )
 
 type Cell struct {
@@ -257,11 +256,9 @@ func (c *Cell) Len() (l int) {
 	return
 }
 
-func (c *Cell) EnsureLen(l int) bool {
-	c.Each(func(i interface{}) {
-		if l--; l == 0 {
-			raw.Throw()
-		}
-	})
+func (c *Cell) MinimumLength(l int) bool {
+	for n := c; n != nil && l > 0; n = n.Tail {
+		l--
+	}
 	return l == 0
 }

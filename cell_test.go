@@ -131,3 +131,25 @@ func TestUntil(t *testing.T) {
 		return key.(int) == limit
 	})
 }
+
+func TestMinimumLength(t *testing.T) {
+	ConfirmMinimumLength := func(c *Cell, l int) {
+		if !c.MinimumLength(l) {
+			t.Fatalf("%v.MinimumLength(%v) should be true", c, l)
+		}
+	}
+	RefuteMinimumLength := func(c *Cell, l int) {
+		if c.MinimumLength(l) {
+			t.Fatalf("%v.MinimumLength(%v) should be false", c, l)
+		}
+	}
+	ConfirmMinimumLength(Cons(), 0)
+	RefuteMinimumLength(Cons(), 1)
+	ConfirmMinimumLength(Cons(0), 0)
+	ConfirmMinimumLength(Cons(0), 1)
+	RefuteMinimumLength(Cons(0), 2)
+	ConfirmMinimumLength(Cons(0, 1), 0)
+	ConfirmMinimumLength(Cons(0, 1), 1)
+	ConfirmMinimumLength(Cons(0, 1), 2)
+	RefuteMinimumLength(Cons(0, 1), 3)
+}
