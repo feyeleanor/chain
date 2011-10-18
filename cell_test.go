@@ -78,7 +78,29 @@ func TestCellSet(t *testing.T) {
 	ConfirmSet(Cons(0, 1, 2), NEXT_NODE + 1, 3, Cons(0, 1, 2, 3))
 }
 
-func TestEach(t *testing.T) {
+func TestCellAppend(t *testing.T) {
+	ConfirmAppend := func(c *Cell, v interface{}, r interface{}) {
+		c.Append(v)
+		tail := c.Tail
+		if !tail.Equal(r) {
+			t.Fatalf("%v.Append(%v) should have tail %v but has %v", c, v, r, tail)
+		}
+	}
+	ConfirmAppend(Cons(1), 2, Cons(2))
+}
+
+func TestCellPrepend(t *testing.T) {
+	ConfirmPrepend := func(c *Cell, v interface{}, r interface{}) {
+		c.Prepend(v)
+		if !c.Equal(r) {
+			t.Fatalf("%v.Prepend(%v) should be %v but is %v", c.Tail, v, r, c)
+		}
+	}
+	ConfirmPrepend(Cons(), 1, Cons())
+	ConfirmPrepend(Cons(1), 2, Cons(2))
+}
+
+func TestCellEach(t *testing.T) {
 	list := Cons(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
 	count := 0
 	list.Each(func(i interface{}) {
@@ -101,7 +123,7 @@ func TestEach(t *testing.T) {
 	})
 }
 
-func TestWhile(t *testing.T) {
+func TestCellWhile(t *testing.T) {
 	list := Cons(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
 	ConfirmLimit := func(c *Cell, l int, f interface{}) {
 		if count, _ := c.While(f); count != l {
@@ -128,7 +150,7 @@ func TestWhile(t *testing.T) {
 	})
 }
 
-func TestUntil(t *testing.T) {
+func TestCellUntil(t *testing.T) {
 	list := Cons(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
 	ConfirmLimit := func(c *Cell, l int, f interface{}) {
 		if count, _ := c.Until(f); count != l {
@@ -155,7 +177,7 @@ func TestUntil(t *testing.T) {
 	})
 }
 
-func TestLen(t *testing.T) {
+func TestCellLen(t *testing.T) {
 	ConfirmLen := func(c *Cell, l int) {
 		if r := c.Len(); r != l {
 			t.Fatalf("%v.Len() should be %v but is %v", c, l, r)
@@ -167,7 +189,7 @@ func TestLen(t *testing.T) {
 	ConfirmLen(Cons(Cons(0, 1), 1), 2)
 }
 
-func TestMinimumLength(t *testing.T) {
+func TestCellMinimumLength(t *testing.T) {
 	ConfirmMinimumLength := func(c *Cell, l int) {
 		if !c.MinimumLength(l) {
 			t.Fatalf("%v.MinimumLength(%v) should be true", c, l)

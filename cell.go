@@ -64,12 +64,8 @@ func (c *Cell) Link(i int, l Node) (b bool) {
 	return
 }
 
-func (c *Cell) Set(i int, v interface{}) bool {
-	if i > PREVIOUS_NODE {
-		if c == nil {
-			*c = Cell{}
-		}
-
+func (c *Cell) Set(i int, v interface{}) (r bool) {
+	if c != nil && i > PREVIOUS_NODE {
 		for ; i > 0; i-- {
 			if c.Tail == nil {
 				c.Tail = &Cell{}
@@ -77,9 +73,9 @@ func (c *Cell) Set(i int, v interface{}) bool {
 			c = c.Tail
 		}
 		c.Head = v
-		return true
+		r = true
 	}
-	return false
+	return
 }
 
 func (c *Cell) Append(x interface{}) {
@@ -87,7 +83,9 @@ func (c *Cell) Append(x interface{}) {
 }
 
 func (c *Cell) Prepend(x interface{}) {
-	*c = Cell{ Head: x, Tail: c }
+	if c != nil {
+		*c = Cell{ x, c }
+	}
 }
 
 func (c Cell) equal(o Cell) (r bool) {

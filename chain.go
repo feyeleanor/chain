@@ -17,3 +17,16 @@ func Cons(items... interface{}) (c *Cell) {
 	}
 	return
 }
+
+func Append(c *Cell, x interface{}) *Cell {
+	if c == nil {
+		c = &Cell{ x, nil }
+	} else {
+		c.Append(x)
+	}
+	return c
+}
+
+func Prepend(c *Cell, x interface{}) *Cell {
+	return &Cell{ x, c }
+}
