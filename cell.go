@@ -118,7 +118,12 @@ func (c *Cell) Equal(o interface{}) (r bool) {
 }
 
 func (c Cell) String() (t string) {
-	return fmt.Sprint(c.Head)
+	t = "("
+	for n := &c; n.Tail != nil; n = n.Tail {
+		t = fmt.Sprintf("%v%v", t, c.Head)
+	}
+	t += ")"
+	return //fmt.Sprint(c.Head)
 }
 
 func (c *Cell) Car() (v interface{}) {
