@@ -100,6 +100,17 @@ func TestCellPrepend(t *testing.T) {
 	ConfirmPrepend(Cons(1), 2, Cons(2))
 }
 
+func TestCellString(t *testing.T) {
+	ConfirmString := func(c *Cell, r string) {
+		if s := c.String(); s != r {
+			t.Fatalf("%v.String() should be %v but is %v", c, r, s)
+		}
+	}
+
+	ConfirmString(Cons(0, 1, 2), "(0 1 2)")
+	ConfirmString(Cons(0, Cons(1, Cons(2))), "(0 (1 (2)))")
+}
+
 func TestCellEach(t *testing.T) {
 	list := Cons(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
 	count := 0

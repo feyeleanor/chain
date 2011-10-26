@@ -118,9 +118,9 @@ func (c *Cell) Equal(o interface{}) (r bool) {
 }
 
 func (c Cell) String() (t string) {
-	t = "("
-	for n := &c; n.Tail != nil; n = n.Tail {
-		t = fmt.Sprintf("%v%v", t, c.Head)
+	t = fmt.Sprintf("(%v", c.Head)
+	for n := c.Tail; n != nil; n = n.Tail {
+		t = fmt.Sprintf("%v %v", t, n.Head)
 	}
 	t += ")"
 	return //fmt.Sprint(c.Head)
