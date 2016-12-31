@@ -22,15 +22,17 @@ func (c *Cell) End() (r *Cell) {
 
 func (c Cell) MoveTo(i int) (l Node) {
 	switch {
-	case i < 0:				break
-	case i == 0:			l = &c
-	default:				n := &c
-							for ; i > 0 && n != nil; i-- {
-								n = n.Tail
-							}
-							if n != nil {
-								l = n
-							}
+	case i < 0:
+	case i == 0:
+		l = &c
+	default:
+		n := &c
+		for ; i > 0 && n != nil; i-- {
+			n = n.Tail
+		}
+		if n != nil {
+			l = n
+		}
 	}
 	return
 }
@@ -43,22 +45,23 @@ func (c *Cell) Link(i int, l Node) (b bool) {
 		}
 	} else {
 		switch i {
-		case CURRENT_NODE:		if n, ok := l.(*Cell); ok {
-									c.Head = l.Content()
-									c.Tail = n.Tail
-									b = true
-								} else {
-									if t, ok := Next(l).(*Cell); ok {
-										c.Head = l.Content()
-										c.Tail = t
-										b = true
-									}
-								}
-
-		case NEXT_NODE:			if n, ok := l.(*Cell); ok {
-									c.Tail = n
-									b = true
-								}
+		case CURRENT_NODE:
+			if n, ok := l.(*Cell); ok {
+				c.Head = l.Content()
+				c.Tail = n.Tail
+				b = true
+			} else {
+				if t, ok := Next(l).(*Cell); ok {
+					c.Head = l.Content()
+					c.Tail = t
+					b = true
+				}
+			}
+		case NEXT_NODE:
+			if n, ok := l.(*Cell); ok {
+				c.Tail = n
+				b = true
+			}
 		}
 	}
 	return
@@ -105,9 +108,12 @@ func (c Cell) equal(o Cell) (r bool) {
 func (c *Cell) Equal(o interface{}) (r bool) {
 	if c != nil {
 		switch o := o.(type) {
-		case *Cell:			r = o != nil && c.equal(*o)
-		case Cell:			r = c.equal(o)
-		default:			r = c.equal(Cell{ Head: o })
+		case *Cell:
+			r = o != nil && c.equal(*o)
+		case Cell:
+			r = c.equal(o)
+		default:
+			r = c.equal(Cell{ Head: o })
 		}
 	} else {
 		if o, ok := o.(*Cell); ok {
@@ -142,19 +148,26 @@ func (c *Cell) Caar() (v interface{}) {
 
 func (c *Cell) Car2() (x, y interface{}) {
 	switch {
-	case c == nil:			return nil, nil
-	case c.Tail == nil:		return c.Head, nil
+	case c == nil:
+	case c.Tail == nil:
+		x = c.Head
+	default:
+		x, y = c.Head, c.Tail.Head
 	}
-	return c.Head, c.Tail.Head
+	return
 }
 
 func (c *Cell) Car3() (x, y, z interface{}) {
 	switch {
-	case c == nil:					return nil, nil, nil
-	case c.Tail == nil:				return c.Head, nil, nil
-	case c.Tail.Tail == nil:		return c.Head, c.Tail.Head, nil
+	case c == nil:
+	case c.Tail == nil:
+		x = c.Head
+	case c.Tail.Tail == nil:
+		x, y = c.Head, c.Tail.Head
+	default:
+		x, y, z = c.Head, c.Tail.Head, c.Tail.Tail.Head
 	}
-	return c.Head, c.Tail.Head, c.Tail.Tail.Head
+	return
 }
 
 func (c *Cell) Cdr() (v *Cell) {
@@ -198,89 +211,105 @@ func (c *Cell) Rplacd(next *Cell) {
 
 func (c *Cell) Each(f interface{}) {
 	switch f := f.(type) {
-	case func(interface{}):						for k := c; k != nil; k = k.Tail { f(k.Head) }
-	case func(int, interface{}):				for i, k := 0, c; k != nil; k = k.Tail {
-													f(i, k.Head)
-													i++
-												}
-	case func(interface{}, interface{}):		for i, k := 0, c; k != nil; k = k.Tail {
-													f(i, k.Head)
-													i++
-												}
+	case func(interface{}):
+		for k := c; k != nil; k = k.Tail {
+			f(k.Head)
+		}
+	case func(int, interface{}):
+		for i, k := 0, c; k != nil; k = k.Tail {
+			f(i, k.Head)
+			i++
+		}
+	case func(interface{}, interface{}):
+		for i, k := 0, c; k != nil; k = k.Tail {
+			f(i, k.Head)
+			i++
+		}
 	}
 }
 
 func (c *Cell) While(f interface{}) (i int, k *Cell) {
 	switch f := f.(type) {
-	case func(interface{}) bool:				for k = c; k != nil; k = k.Tail {
-													if !f(k.Head) {
-														break
-													}
-													i++
-												}
-	case func(int, interface{}) bool:			for k = c; k != nil; k = k.Tail {
-													if !f(i, k.Head) {
-														break
-													}
-													i++
-												}
-	case func(interface{}, interface{}) bool:	for k = c; k != nil; k = k.Tail {
-													if !f(i, k.Head) {
-														break
-													}
-													i++
-												}
-	case Equatable:								for k = c; k != nil; k = k.Tail {
-													if !f.Equal(k.Head) {
-														break
-													}
-													i++
-												}
-	case fmt.Stringer:							i, k = c.While(f.String())
-	case interface{}:							for k = c; k != nil; k = k.Tail {
-													if f != k.Head {
-														break
-													}
-													i++
-												}
+	case func(interface{}) bool:
+		for k = c; k != nil; k = k.Tail {
+			if !f(k.Head) {
+				break
+			}
+			i++
+		}
+	case func(int, interface{}) bool:
+		for k = c; k != nil; k = k.Tail {
+			if !f(i, k.Head) {
+				break
+			}
+			i++
+		}
+	case func(interface{}, interface{}) bool:
+		for k = c; k != nil; k = k.Tail {
+			if !f(i, k.Head) {
+				break
+			}
+			i++
+		}
+	case Equatable:
+		for k = c; k != nil; k = k.Tail {
+			if !f.Equal(k.Head) {
+				break
+			}
+			i++
+		}
+	case fmt.Stringer:
+		i, k = c.While(f.String())
+	case interface{}:
+		for k = c; k != nil; k = k.Tail {
+			if f != k.Head {
+				break
+			}
+			i++
+		}
 	}
 	return
 }
 
 func (c *Cell) Until(f interface{}) (i int, k *Cell) {
 	switch f := f.(type) {
-	case func(interface{}) bool:				for k = c; k != nil; k = k.Tail {
-													if f(k.Head) {
-														break
-													}
-													i++
-												}
-	case func(int, interface{}) bool:			for k = c; k != nil; k = k.Tail {
-													if f(i, k.Head) {
-														break
-													}
-													i++
-												}
-	case func(interface{}, interface{}) bool:	for k = c; k != nil; k = k.Tail {
-													if f(i, k.Head) {
-														break
-													}
-													i++
-												}
-	case Equatable:								for k = c; k != nil; k = k.Tail {
-													if f.Equal(k.Head) {
-														break
-													}
-													i++
-												}
-	case fmt.Stringer:							i, k = c.Until(f.String())
-	case interface{}:							for k = c; k != nil; k = k.Tail {
-													if f == k.Head {
-														break
-													}
-													i++
-												}
-	
+	case func(interface{}) bool:
+		for k = c; k != nil; k = k.Tail {
+			if f(k.Head) {
+				break
+			}
+			i++
+		}
+	case func(int, interface{}) bool:
+		for k = c; k != nil; k = k.Tail {
+			if f(i, k.Head) {
+				break
+			}
+			i++
+		}
+	case func(interface{}, interface{}) bool:
+		for k = c; k != nil; k = k.Tail {
+			if f(i, k.Head) {
+				break
+			}
+			i++
+		}
+	case Equatable:
+		for k = c; k != nil; k = k.Tail {
+			if f.Equal(k.Head) {
+				break
+			}
+			i++
+		}
+	case fmt.Stringer:
+		i, k = c.Until(f.String())
+	case interface{}:
+		for k = c; k != nil; k = k.Tail {
+			if f == k.Head {
+				break
+			}
+			i++
+		}
 	}
 	return
 }

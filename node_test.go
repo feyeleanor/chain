@@ -8,12 +8,14 @@ func TestLastElement(t *testing.T) {
 	ConfirmLastElement := func(n Node, r interface{}) {
 		x := LastElement(n)
 		switch x := x.(type) {
-		case Equatable: 	if !x.Equal(r) {
-								t.Fatalf("Last(%v) Equatable: should be '%v' but is '%v'", n, r, x)
-							}
-		default:		 	if r != x {
-								t.Fatalf("Last(%v) default: should be '%v' but is '%v'", n, r, x)
-							}
+		case Equatable:
+			if !x.Equal(r) {
+				t.Fatalf("Last(%v) Equatable: should be '%v' but is '%v'", n, r, x)
+			}
+		default:
+			if r != x {
+				t.Fatalf("Last(%v) default: should be '%v' but is '%v'", n, r, x)
+			}
 		}
 	}
 	ConfirmLastElement(Cons(0), 0)
@@ -23,8 +25,8 @@ func TestLastElement(t *testing.T) {
 
 func TestMoveToNode(t *testing.T) {
 	ConfirmMoveTo := func(n Node, i int, r interface{}) {
-		switch x := n.MoveTo(i); {
-		case x.Content() != r:	t.Fatalf("%v.MoveTo(%v) should be '%v' but is '%v'", n, i, r, x.Content())
+		if x := n.MoveTo(i); x.Content() != r {
+			t.Fatalf("%v.MoveTo(%v) should be '%v' but is '%v'", n, i, r, x.Content())
 		}
 	}
 	RefuteMoveTo := func(n Node, i int) {

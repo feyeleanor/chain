@@ -9,8 +9,10 @@ func TestCellEnd(t *testing.T) {
 	ConfirmEnd := func(c *Cell, r interface{}) {
 		x := c.End()
 		switch {
-		case x == nil:		t.Fatalf("%v.End() returned nil", c)
-		case x.Head != r:	t.Fatalf("%v.End() should be '%v' but is '%v'", c, r, x.Head)
+		case x == nil:
+			t.Fatalf("%v.End() returned nil", c)
+		case x.Head != r:
+			t.Fatalf("%v.End() should be '%v' but is '%v'", c, r, x.Head)
 		}
 	}
 	RefuteEnd := func(c *Cell) {
@@ -69,8 +71,10 @@ func TestCellMoveTo(t *testing.T) {
 func TestCellSet(t *testing.T) {
 	ConfirmSet := func(c *Cell, i int, v interface{}, r interface{}) {
 		switch {
-		case !c.Set(i, v):		t.Fatalf("Set(%v, %v) failed", i, v)
-		case !c.Equal(r):		t.Fatalf("Set(%v, %v) should be %v but is %v", i, v, r, c)
+		case !c.Set(i, v):
+			t.Fatalf("Set(%v, %v) failed", i, v)
+		case !c.Equal(r):
+			t.Fatalf("Set(%v, %v) should be %v but is %v", i, v, r, c)
 		}
 	}
 	ConfirmSet(Cons(0), CURRENT_NODE, 1, Cons(1))

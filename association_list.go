@@ -15,18 +15,20 @@ func (c *Cell) Define(key interface{}, value interface{}) (r *Cell) {
 
 func (c *Cell) Assq(key interface{}) (r *Cell) {
 	switch k := key.(type) {
-	case Equatable:				for r = c; r != nil; r = r.Tail {
-									if head, ok := r.Head.(*Cell); ok && k.Equal(head) {
-										break
-									}
-								}
-	case fmt.Stringer:			r = c.Assq(k.String())
-	case interface{}:			for r = c; r != nil; r = r.Tail {
-									if head, ok := r.Head.(*Cell); ok && k == head {
-										break
-									}
-								}
-
+	case Equatable:
+		for r = c; r != nil; r = r.Tail {
+			if head, ok := r.Head.(*Cell); ok && k.Equal(head) {
+				break
+			}
+		}
+	case fmt.Stringer:
+		r = c.Assq(k.String())
+	case interface{}:
+		for r = c; r != nil; r = r.Tail {
+			if head, ok := r.Head.(*Cell); ok && k == head {
+				break
+			}
+		}
 	}
 	return
 }
